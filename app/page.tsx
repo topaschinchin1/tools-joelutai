@@ -7,6 +7,7 @@ const tools = [
       "Ask about recipe optimization, ingredient substitutions, or nutraceutical formulation. Instant answers.",
     href: "/foodpro",
     badge: "AI Chat",
+    image: "/images/ai-food-scientist.png",
   },
   {
     name: "FoodCost Pro Calculator",
@@ -14,6 +15,7 @@ const tools = [
       "Calculate true product costs including ingredients, labor, packaging and overhead with pricing recommendations.",
     href: "/foodcost",
     badge: "Free",
+    image: "/images/foodcost-pro.png",
   },
   {
     name: "FSMA 204 Compliance Checker",
@@ -21,6 +23,7 @@ const tools = [
       "Answer 6 questions to find out if the FDA Food Traceability Rule applies to your business.",
     href: "/fsma",
     badge: "Free",
+    image: "/images/fsma-checker.png",
   },
   {
     name: "Bacterial Colony Counter",
@@ -28,6 +31,7 @@ const tools = [
       "Upload petri dish images and get instant AI-powered colony counts with computer vision analysis.",
     href: "/colony-counter",
     badge: "New",
+    image: "/images/colony-counter.png",
   },
   {
     name: "Microglia Morphology Analyzer",
@@ -35,6 +39,7 @@ const tools = [
       "Upload microscopy images for instant cell classification with solidity, area, and morphological state analysis.",
     href: "/microglia",
     badge: "Popular",
+    image: "/images/microglia-analyzer.png",
   },
 ];
 

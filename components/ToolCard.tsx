@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 interface ToolCardProps {
@@ -5,6 +6,7 @@ interface ToolCardProps {
   description: string;
   href: string;
   badge: string;
+  image: string;
   badgeColor?: string;
   index: number;
 }
@@ -16,7 +18,7 @@ const badgeColors: Record<string, string> = {
   "AI Chat": "border-amber-500/30 text-amber-400 bg-amber-500/10",
 };
 
-export function ToolCard({ name, description, href, badge, index }: ToolCardProps) {
+export function ToolCard({ name, description, href, badge, image, index }: ToolCardProps) {
   return (
     <Link
       href={href}
@@ -27,13 +29,20 @@ export function ToolCard({ name, description, href, badge, index }: ToolCardProp
       >
         {badge}
       </span>
-      <h3 className="mb-2 text-base font-semibold text-text transition-colors group-hover:text-accent">
+      <Image
+        src={image}
+        alt={name}
+        width={64}
+        height={64}
+        className="mb-3 rounded-lg object-contain"
+      />
+      <h3 className="mb-1 text-base font-semibold text-text transition-colors group-hover:text-accent">
         {name}
       </h3>
-      <p className="line-clamp-3 text-sm leading-relaxed text-text-secondary">
+      <p className="line-clamp-2 text-xs leading-relaxed text-text-secondary">
         {description}
       </p>
-      <span className="mt-3 text-sm text-text-muted transition-colors group-hover:text-accent">
+      <span className="mt-2 text-sm text-text-muted transition-colors group-hover:text-accent">
         Try It Free &rarr;
       </span>
     </Link>
