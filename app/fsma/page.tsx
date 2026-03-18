@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+const LEAD_WEBHOOK_URL = "https://joelut.app.n8n.cloud/webhook/foodcost-lead";
+
 type Answers = Record<string, string>;
 
 interface Detail {
@@ -175,10 +177,37 @@ const statusBg = { exempt: "from-green-100 to-green-200", partial: "from-amber-1
 const statusTextColor = { exempt: "text-green-800", partial: "text-amber-700", required: "text-red-700" };
 
 export default function FSMAPage() {
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [gateError, setGateError] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
   const [answers, setAnswers] = useState<Answers>({});
   const [result, setResult] = useState<ResultData | null>(null);
 
   const allAnswered = questions.every((q) => answers[q.key]);
+
+  async function submitGate() {
+    if (!userName.trim()) { setGateError("Please enter your name"); return; }
+    if (!userEmail.trim() || !userEmail.includes("@")) { setGateError("Please enter a valid email"); return; }
+    setGateError("");
+
+    try {
+      fetch(LEAD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: userName.trim(),
+          email: userEmail.trim(),
+          tool: "FSMA 204 Compliance Checker",
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch(() => {});
+    } catch {
+      // Don't block user if webhook fails
+    }
+
+    setUnlocked(true);
+  }
 
   function select(key: string, value: string) {
     setAnswers((prev) => ({ ...prev, [key]: value }));
@@ -221,7 +250,46 @@ export default function FSMAPage() {
         </p>
       </section>
 
-      <div className="mx-auto max-w-[700px] px-4 pb-12">
+      {/* Email Gate */}
+      {!unlocked && (
+        <div className="mx-auto max-w-md px-4 pb-16">
+          <div className="rounded-2xl bg-white p-8 shadow-lg">
+            <div className="mb-4 text-center text-5xl">📋</div>
+            <h2 className="mb-2 text-center text-xl font-bold text-green-800">Check Your Compliance for Free</h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              Enter your name and email to access the compliance checker. We will send you a detailed report based on your results.
+            </p>
+            <input
+              type="text"
+              placeholder="Your name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="mb-3 w-full rounded-lg border-2 border-gray-200 px-4 py-3 focus:border-green-800 focus:outline-none"
+            />
+            <input
+              type="email"
+              placeholder="Your email"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), submitGate())}
+              className="mb-3 w-full rounded-lg border-2 border-gray-200 px-4 py-3 focus:border-green-800 focus:outline-none"
+            />
+            {gateError && <p className="mb-3 text-center text-sm text-orange-600">{gateError}</p>}
+            <button
+              type="button"
+              onClick={submitGate}
+              className="w-full rounded-xl bg-gradient-to-r from-green-800 to-green-600 px-8 py-4 text-lg font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              Start Assessment &rarr;
+            </button>
+            <p className="mt-4 text-center text-xs text-gray-400">
+              Powered by <span className="font-semibold text-green-700">JoeLuT AI</span>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {unlocked && <><div className="mx-auto max-w-[700px] px-4 pb-12">
         {!result ? (
           <div className="rounded-2xl bg-white p-8 shadow-lg">
             <h2 className="mb-6 flex items-center gap-2 text-xl font-semibold text-green-800">
@@ -346,7 +414,7 @@ export default function FSMAPage() {
             </ul>
           </div>
         </div>
-      </div>
+      </div></>}
 
       <section className="py-10 text-center">
         <h2 className="mb-3 text-2xl font-bold text-green-800">Need Help with FSMA Compliance?</h2>
