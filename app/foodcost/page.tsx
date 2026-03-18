@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 
-const LEAD_WEBHOOK_URL = "https://joelut.app.n8n.cloud/webhook/foodcost-lead";
+const LEAD_WEBHOOK_URL = "https://joelut.app.n8n.cloud/webhook/landing-page-leads";
 
 interface Ingredient {
   id: number;
