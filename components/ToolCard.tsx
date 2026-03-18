@@ -17,37 +17,25 @@ const badgeColors: Record<string, string> = {
 };
 
 export function ToolCard({ name, description, href, badge, index }: ToolCardProps) {
-  const num = String(index + 1).padStart(2, "0");
-
   return (
     <Link
       href={href}
-      className={`animate-fade-in-up stagger-${index + 1} group relative block rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:border-border-light hover:bg-surface-light`}
+      className={`animate-fade-in-up stagger-${index + 1} group relative flex h-[320px] w-[320px] flex-col items-center justify-center rounded-full border border-border bg-surface p-10 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/20 hover:bg-surface-light`}
     >
-      <div className="mb-4 flex items-center justify-between">
-        <span className="text-xs font-medium text-text-muted">{num}/</span>
-        <span
-          className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${badgeColors[badge] || "border-border text-text-muted"}`}
-        >
-          {badge}
-        </span>
-      </div>
-      <h3 className="mb-2 text-lg font-semibold text-text transition-colors group-hover:text-accent">
+      <span
+        className={`absolute top-8 rounded-full border px-2.5 py-0.5 text-xs font-medium ${badgeColors[badge] || "border-border text-text-muted"}`}
+      >
+        {badge}
+      </span>
+      <h3 className="mb-2 text-base font-semibold text-text transition-colors group-hover:text-accent">
         {name}
       </h3>
-      <p className="text-sm leading-relaxed text-text-secondary">{description}</p>
-      <div className="mt-4 flex items-center gap-1 text-sm text-text-muted transition-colors group-hover:text-accent">
-        <span>Open tool</span>
-        <svg
-          className="h-4 w-4 transition-transform group-hover:translate-x-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </div>
+      <p className="line-clamp-3 text-sm leading-relaxed text-text-secondary">
+        {description}
+      </p>
+      <span className="mt-3 text-sm text-text-muted transition-colors group-hover:text-accent">
+        Try It Free &rarr;
+      </span>
     </Link>
   );
 }

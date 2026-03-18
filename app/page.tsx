@@ -65,7 +65,7 @@ export default function Home() {
         <p className="text-sm font-medium text-text-muted">02/ Available Tools</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid justify-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool, i) => (
           <ToolCard key={tool.href} {...tool} index={i} />
         ))}
