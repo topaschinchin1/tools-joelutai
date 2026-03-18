@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 
+const LEAD_WEBHOOK_URL = "https://joelut.app.n8n.cloud/webhook/foodcost-lead";
+
 interface Ingredient {
   id: number;
   name: string;
@@ -33,11 +35,39 @@ interface Results {
 let nextId = 1;
 
 export default function FoodCostPage() {
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [gateError, setGateError] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { id: nextId++, name: "", qty: "", unit: "lbs", cost: "" },
   ]);
   const [results, setResults] = useState<Results | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  async function submitGate() {
+    if (!userName.trim()) { setGateError("Please enter your name"); return; }
+    if (!userEmail.trim() || !userEmail.includes("@")) { setGateError("Please enter a valid email"); return; }
+    setGateError("");
+
+    // Send lead to n8n webhook -> Google Sheets
+    try {
+      fetch(LEAD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: userName.trim(),
+          email: userEmail.trim(),
+          tool: "FoodCost Pro Calculator",
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch(() => {});
+    } catch {
+      // Don't block user if webhook fails
+    }
+
+    setUnlocked(true);
+  }
 
   function addIngredient() {
     setIngredients((prev) => [
@@ -141,7 +171,46 @@ export default function FoodCostPage() {
         </p>
       </section>
 
-      <form onSubmit={calculate} className="mx-auto max-w-[900px] px-4 pb-12">
+      {/* Email Gate */}
+      {!unlocked && (
+        <div className="mx-auto max-w-md px-4 pb-16">
+          <div className="rounded-2xl bg-white p-8 shadow-lg">
+            <div className="mb-4 text-center text-5xl">💰</div>
+            <h2 className="mb-2 text-center text-xl font-bold text-green-800">Get Started for Free</h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              Enter your name and email to access the calculator. No spam, just useful food business insights.
+            </p>
+            <input
+              type="text"
+              placeholder="Your name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="mb-3 w-full rounded-lg border-2 border-gray-200 px-4 py-3 focus:border-green-800 focus:outline-none"
+            />
+            <input
+              type="email"
+              placeholder="Your email"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), submitGate())}
+              className="mb-3 w-full rounded-lg border-2 border-gray-200 px-4 py-3 focus:border-green-800 focus:outline-none"
+            />
+            {gateError && <p className="mb-3 text-center text-sm text-orange-600">{gateError}</p>}
+            <button
+              type="button"
+              onClick={submitGate}
+              className="w-full rounded-xl bg-gradient-to-r from-green-800 to-green-600 px-8 py-4 text-lg font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              Open Calculator &rarr;
+            </button>
+            <p className="mt-4 text-center text-xs text-gray-400">
+              Powered by <span className="font-semibold text-green-700">JoeLuT AI</span>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {unlocked && <><form onSubmit={calculate} className="mx-auto max-w-[900px] px-4 pb-12">
         {/* Product Details */}
         <div className="mb-6 rounded-2xl bg-white p-8 shadow-lg">
           <h2 className="mb-6 flex items-center gap-2 text-xl font-semibold text-green-800">
@@ -314,6 +383,7 @@ export default function FoodCostPage() {
           </div>
         </div>
       </section>
+      </>}
 
       <section className="py-10 text-center">
         <h2 className="mb-3 text-2xl font-bold text-green-800">Need Help With Your Food Business?</h2>
