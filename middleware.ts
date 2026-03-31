@@ -11,11 +11,6 @@ const PUBLIC_PATHS = [
   "/blog",
   "/benchvoice.html",
   "/foodcost",
-  "/foodpro",
-  "/fsma",
-  "/colony-counter",
-  "/copack-demo",
-  "/microglia",
 ];
 
 function isPublicPath(pathname: string): boolean {
